@@ -1,1 +1,18 @@
-[]
+[
+  {
+    "id": "lecture-01",
+    "title": "LECTURE 1: LINES & PLANES OF PROJECTION OF THE SKULL"
+  },
+  {
+    "id": "lecture-02",
+    "title": "LECTURE 2: SKULL RADIOGRAPHIC PROJECTIONS"
+  },
+  {
+    "id": "lecture-03",
+    "title": "LECTURE 3: PARANASAL SINUSES, FACE & NOSE"
+  },
+  {
+    "id": "lecture-04",
+    "title": "LECTURE 4: MANDIBLE & TMJ"
+  }
+]

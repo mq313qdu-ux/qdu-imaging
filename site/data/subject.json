@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "id": "unconfigured",
-  "repositoryId": "qdu-template",
+  "id": "imaging",
+  "repositoryId": "qdu-imaging",
   "revision": "1",
-  "title": "",
-  "credit": ""
+  "title": "التصوير",
+  "direction": "rtl"
 }
