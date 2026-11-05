@@ -192,7 +192,7 @@ function renderQuestion(scroll = true) {
     const options = document.createDocumentFragment()
     const translations = []
     for (const option of question.options) {
-        const choice = button('', 'option-btn', () => submitAnswer(option.id))
+        const choice = button('', 'option-btn study-option', () => submitAnswer(option.id))
         choice.dataset.optionId = option.id
         const original = element('span', 'choice-original')
         original.dir = 'auto'
@@ -205,7 +205,11 @@ function renderQuestion(scroll = true) {
         translations.push(translation)
         const label = element('span', 'choice-label')
         label.hidden = true
-        choice.append(original, translation, label)
+        const copy = element('span', 'choice-copy')
+        copy.append(original, translation)
+        const marker = element('span', 'choice-marker')
+        marker.setAttribute('aria-hidden', 'true')
+        choice.append(marker, copy, label)
         options.append(choice)
     }
     byId('quizOptions').replaceChildren(options)
@@ -247,7 +251,7 @@ function paintAnswer(fresh = false) {
     education.setAnswered(answered)
     byId('previousQuestion').disabled = cursor === 0
     byId('nextQuestion').disabled = !answered
-    byId('nextQuestion').textContent = cursor + 1 === questions.length ? 'عرض النتيجة' : 'التالي'
+    byId('nextQuestionLabel').textContent = cursor + 1 === questions.length ? 'عرض النتيجة' : 'التالي'
 }
 
 function quizActive() {
@@ -363,9 +367,14 @@ function favoriteButton(id, onChange, inQuiz = false) {
     function paint(saved) {
         const description = saved ? 'إزالة من المفضلة' : 'إضافة إلى المفضلة'
         if (inQuiz) {
-            const icon = element('span', '', saved ? '★' : '☆')
+            const icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
+            icon.setAttribute('class', 'qdu-icon')
+            icon.setAttribute('viewBox', '0 0 24 24')
             icon.setAttribute('aria-hidden', 'true')
-            control.replaceChildren(icon, ' مفضلة')
+            const use = document.createElementNS('http://www.w3.org/2000/svg', 'use')
+            use.setAttribute('href', new URL('icons.svg#star', base).href)
+            icon.append(use)
+            control.replaceChildren(icon, element('span', '', 'مفضلة'))
             control.setAttribute('aria-label', description)
         } else {
             control.textContent = description

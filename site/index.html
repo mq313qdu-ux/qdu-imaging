@@ -8,27 +8,29 @@
     <link rel="icon" href="./favicon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="./css/fonts.css">
     <link rel="stylesheet" href="./css/qdu.css">
+    <link rel="stylesheet" href="./css/study.css">
     <script type="module" src="./js/app.js"></script>
 </head>
 <body>
     <div class="app-container light-mode" id="app">
         <a class="skip-link" href="#mainContent">انتقل إلى المحتوى</a>
-        <header class="header">
-            <div class="top-controls">
-                <button type="button" class="control-btn" id="themeToggle" aria-label="تغيير مظهر العرض" data-theme="system" disabled>
-                    <span class="sun-icon" aria-hidden="true">☀️</span>
-                    <span class="moon-icon" aria-hidden="true">🌙</span>
+        <header class="site-header">
+            <div class="site-brand">
+                <h1 class="site-title">منصة <bdi lang="en">QDU</bdi> للاختبار التفاعلي</h1>
+                <div class="site-subject">
+                    <p id="subjectName" dir="auto" hidden></p>
+                    <span class="demo-badge" id="badge" hidden></span>
+                </div>
+                <p class="student-credit" id="credit" dir="auto" hidden></p>
+            </div>
+            <div class="site-controls" aria-label="خيارات العرض">
+                <button type="button" class="utility-btn" id="themeToggle" aria-label="تغيير مظهر العرض" data-theme="system" disabled>
+                    <svg class="qdu-icon sun-icon" aria-hidden="true" viewBox="0 0 24 24"><use href="./icons.svg#sun"/></svg><svg class="qdu-icon moon-icon" aria-hidden="true" viewBox="0 0 24 24"><use href="./icons.svg#moon"/></svg>
                 </button>
-                <button type="button" class="control-btn" id="fullscreenToggle" aria-label="ملء الشاشة" aria-pressed="false">
-                    <span aria-hidden="true">⛶</span>
+                <button type="button" class="utility-btn" id="fullscreenToggle" aria-label="ملء الشاشة" aria-pressed="false">
+                    <svg class="qdu-icon " aria-hidden="true" viewBox="0 0 24 24"><use href="./icons.svg#expand"/></svg>
                 </button>
             </div>
-            <h1 class="platform-title">منصة QDU للاختبار التفاعلي</h1>
-            <div class="subject-line">
-                <p class="subject-name" id="subjectName" dir="auto" hidden></p>
-                <span class="demo-badge" id="badge" hidden></span>
-            </div>
-            <p class="student-credit" id="credit" dir="auto" hidden></p>
         </header>
         <main class="content-wrapper" id="mainContent" tabindex="-1">
             <p id="notice" class="notice" role="status" hidden></p>
@@ -61,38 +63,44 @@
                 </details>
             </section>
             <section id="quizSection" aria-labelledby="quizTitle" hidden>
-                <div class="quiz-container">
-                    <div class="quiz-header">
-                        <div class="quiz-utilities">
-                            <time id="quizTime" class="quiz-time" dir="ltr" aria-label="وقت الاختبار"></time>
-                            <button type="button" class="quiz-back" id="leaveQuiz">رجوع</button>
+                <div class="study-card">
+                    <header class="study-header">
+                        <div class="study-meta">
+                            <button type="button" class="study-back" id="leaveQuiz"><svg class="qdu-icon " aria-hidden="true" viewBox="0 0 24 24"><use href="./icons.svg#arrow-right"/></svg><span>المحاضرات</span></button>
+                            <div class="study-clock"><svg class="qdu-icon " aria-hidden="true" viewBox="0 0 24 24"><use href="./icons.svg#clock"/></svg><span class="visually-hidden">الوقت المنقضي</span><time id="quizTime" dir="ltr" aria-label="وقت الاختبار"></time></div>
                         </div>
-                        <h2 class="quiz-title" id="quizTitle" dir="auto"></h2>
+                        <p class="study-eyebrow">اختبار المحاضرة</p>
+                        <h2 class="study-title" id="quizTitle" dir="auto"></h2>
                         <p id="quizRevision" hidden></p>
+                        <div class="study-progress-label">
+                            <p id="questionCounter"></p>
+                            <span>تقدّم الاختبار</span>
+                        </div>
                         <progress class="progress-bar" id="progressBar" aria-label="تقدم الاختبار"></progress>
-                        <p id="questionCounter"></p>
-                    </div>
-                    <div class="question-section" id="questionSection">
-                        <div class="question-header">
-                            <h3 class="question-text" id="questionText" dir="auto" tabindex="-1" data-protected></h3>
-                            <div class="question-toolbar" aria-label="أدوات السؤال">
-                                <button type="button" class="question-tool translate-btn" id="translationToggle" aria-controls="translationControls questionTranslation" aria-pressed="false"><span aria-hidden="true">🔤</span> ترجمة</button>
-                                <button type="button" class="question-tool audio-tool" id="speechToggle" aria-controls="speechPanel" aria-expanded="false"><span aria-hidden="true">🔊</span> استماع</button>
-                                <button type="button" class="question-tool hint-tool" id="hintToggle" aria-controls="hintPanel" aria-expanded="false"><span aria-hidden="true">💡</span> تلميح</button>
+                    </header>
+                    <div class="study-question" id="questionSection">
+                        <div class="study-prompt">
+                            <h3 id="questionText" dir="auto" tabindex="-1" data-protected></h3>
+                            <p class="translation" id="questionTranslation" dir="rtl" lang="ar-IQ" data-protected hidden></p>
+                        </div>
+                        <div class="study-tools">
+                            <div class="study-toolbar" role="group" aria-label="أدوات السؤال">
+                                <button type="button" class="question-tool translate-btn" id="translationToggle" aria-controls="translationControls questionTranslation" aria-pressed="false"><svg class="qdu-icon " aria-hidden="true" viewBox="0 0 24 24"><use href="./icons.svg#languages"/></svg><span>ترجمة</span></button>
+                                <button type="button" class="question-tool audio-tool" id="speechToggle" aria-controls="speechPanel" aria-expanded="false"><svg class="qdu-icon " aria-hidden="true" viewBox="0 0 24 24"><use href="./icons.svg#volume"/></svg><span>استماع</span></button>
+                                <button type="button" class="question-tool hint-tool" id="hintToggle" aria-controls="hintPanel" aria-expanded="false"><svg class="qdu-icon " aria-hidden="true" viewBox="0 0 24 24"><use href="./icons.svg#bulb"/></svg><span>تلميح</span></button>
                                 <span id="questionFavorite"></span>
                             </div>
+                            <div class="translation-controls" id="translationControls" dir="rtl" hidden>
+                                <label class="quiz-field" for="translationMode">عرض الترجمة
+                                    <select id="translationMode">
+                                        <option value="none">بدون ترجمة</option>
+                                        <option value="question">السؤال فقط</option>
+                                        <option value="options">الاختيارات فقط</option>
+                                        <option value="both">السؤال والاختيارات</option>
+                                    </select>
+                                </label>
+                            </div>
                         </div>
-                        <div class="translation-controls" id="translationControls" dir="rtl" hidden>
-                            <label class="quiz-field" for="translationMode">الترجمة
-                                <select id="translationMode">
-                                    <option value="none">بدون ترجمة</option>
-                                    <option value="question">السؤال فقط</option>
-                                    <option value="options">الاختيارات فقط</option>
-                                    <option value="both">السؤال والاختيارات</option>
-                                </select>
-                            </label>
-                        </div>
-                        <p class="translation" id="questionTranslation" dir="rtl" lang="ar-IQ" data-protected hidden></p>
                         <details class="question-panel tool-panel" id="hintPanel">
                             <summary hidden>تلميح</summary>
                             <p id="hintText" dir="rtl" lang="ar-IQ"></p>
@@ -125,11 +133,13 @@
                             <summary>لماذا هذه الإجابة؟</summary>
                             <div id="whyText" lang="ar-IQ"></div>
                         </details>
+                        <footer class="study-footer">
                         <div id="quizNavigation" class="quiz-navigation" dir="rtl">
-                            <button class="action-btn secondary-btn" type="button" id="previousQuestion" disabled>السابق</button>
-                            <button class="action-btn primary-btn" type="button" id="nextQuestion" disabled>التالي</button>
+                            <button class="action-btn secondary-btn" type="button" id="previousQuestion" disabled><svg class="qdu-icon " aria-hidden="true" viewBox="0 0 24 24"><use href="./icons.svg#arrow-right"/></svg><span>السابق</span></button>
+                            <button class="action-btn primary-btn" type="button" id="nextQuestion" disabled><span id="nextQuestionLabel">التالي</span><svg class="qdu-icon " aria-hidden="true" viewBox="0 0 24 24"><use href="./icons.svg#arrow-left"/></svg></button>
                         </div>
                         <p class="keyboard-help">لوحة المفاتيح <bdi>↑ ↓</bdi> لاختيار الإجابة، <bdi>Space</bdi> أو <bdi>Ctrl</bdi> للتأكيد، <bdi>→</bdi> للتالي و<bdi>←</bdi> للسابق.</p>
+                        </footer>
                     </div>
                 </div>
                 <dialog class="quiz-container exit-dialog" id="exitQuiz" aria-labelledby="exitTitle" aria-describedby="exitDescription">
