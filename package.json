@@ -1,0 +1,14 @@
+{
+  "name": "qdu-imaging",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "start": "node tools/serve.mjs",
+    "validate": "node tools/validate.mjs",
+    "test": "node --test"
+  }
+}
