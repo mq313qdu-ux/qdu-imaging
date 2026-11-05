@@ -1,0 +1,55 @@
+/* QDU design tokens: primitives -> semantic surfaces -> component geometry. */
+.app-container {
+    --violet-500: #7c5cdb;
+    --violet-600: #6847c4;
+    --violet-800: #382565;
+    --blue-500: #5979dc;
+    --mint-500: #328672;
+    --canvas: #f5f5fa;
+    --surface: #fff;
+    --surface-alt: #f4f2fa;
+    --surface-hover: #eeebf8;
+    --ink: #25223b;
+    --muted: #6a657f;
+    --line: #e5e2ef;
+    --accent: #6446b4;
+    --accent-soft: #eee8fc;
+    --success: #20634e;
+    --success-bg: #eaf7f0;
+    --danger: #a32e46;
+    --danger-bg: #fff0f3;
+    --shadow-sm: 0 4px 16px #29214405;
+    --shadow: 0 16px 48px #29214408;
+    --radius-sm: 12px;
+    --radius: 20px;
+    --radius-lg: 28px;
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 24px;
+    --space-6: 32px;
+    --space-7: 48px;
+    --rail-width: 240px;
+    --brand-action: linear-gradient(115deg,#7758cf,#5940ac);
+    color: var(--ink);
+    background: var(--canvas);
+}
+
+.app-container.dark-mode {
+    --canvas: #12121e;
+    --surface: #1c1c2d;
+    --surface-alt: #25243b;
+    --surface-hover: #2e2b46;
+    --ink: #f1eefb;
+    --muted: #b4aec9;
+    --line: #39354f;
+    --accent: #c6b0ff;
+    --accent-soft: #342a50;
+    --success: #9be4c4;
+    --success-bg: #203c34;
+    --danger: #ffb8c7;
+    --danger-bg: #452935;
+    --shadow-sm: 0 4px 16px #00000010;
+    --shadow: 0 16px 48px #00000016;
+}

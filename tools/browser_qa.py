@@ -104,7 +104,7 @@ with sync_playwright() as playwright:
         page = context.new_page()
         observe(page)
         launch(page)
-        for width in [320, 375, 768, 1280, 1920]:
+        for width in [320, 375, 768, 1280, 1440, 1920]:
             page.set_viewport_size({'width':width,'height':1000})
             for theme in ['light', 'dark']:
                 page.emulate_media(color_scheme=theme)
@@ -130,7 +130,7 @@ with sync_playwright() as playwright:
                 page.locator('#questionFavorite button').click()
                 page.locator('#questionFavorite button').click()
         context.close()
-        print(f'{scenario}: 40 responsive/translation cases passed', flush=True)
+        print(f'{scenario}: 48 responsive/translation cases passed', flush=True)
 
     context = browser.new_context(viewport={'width':1280,'height':1000}, color_scheme='light')
     page = context.new_page()
@@ -176,7 +176,6 @@ with sync_playwright() as playwright:
     page.locator('#leaveQuiz').click()
     expect(page.locator('#exitQuiz')).to_be_visible()
     page.locator('#exitQuiz [value="leave"]').click()
-    page.locator('.study-library summary').click()
     page.locator('[data-library="drafts"]').click()
     expect(page.locator('#libraryHeading')).to_be_visible()
     assert len(state(page)['drafts']) == 1

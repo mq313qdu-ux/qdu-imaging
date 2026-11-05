@@ -1,3 +1,4 @@
+import {icon, renderOverview, decorateLibrary} from './presentation.js?v=1.2.0'
 import {loadContent} from './content.js'
 import {createStore, storageKey} from './storage.js'
 import {addStudyTime, matchingDraft, moveQuestion, openAttempt, recordAnswer, removeDraft, score} from './quiz.js'
@@ -67,6 +68,17 @@ function switchView(next) {
         }
     }
     view = next
+    renderOverview(content, store.read())
+    byId('app').dataset.view = next
+    byId('app').classList.remove('menu-open')
+    byId('menuToggle').setAttribute('aria-expanded', 'false')
+    const active = next === 'library' ? byId('library').dataset.type : next === 'lectureSelection' ? 'home' : null
+    for (const link of document.querySelectorAll('.nav-link')) {
+        const selected = (link.dataset.library || 'home') === active
+        if (selected) link.setAttribute('aria-current', 'page')
+        else link.removeAttribute('aria-current')
+    }
+    byId('pageTitle').textContent = next === 'quizSection' ? 'جلسة دراسة' : next === 'resultsSection' ? 'حصيلة التعلّم' : next === 'library' ? byId('libraryHeading').textContent : 'مساحة الدراسة'
     pendingQuiz = null
     for (const id of views) byId(id).hidden = id !== next
     window.scrollTo(0, 0)
@@ -83,7 +95,15 @@ function showHome(focus = true) {
     const historyLectures = new Set(state.history.filter(entry => quizKind(entry) === 'lecture').map(entry => entry.lectureId))
     const drafts = new Map(state.drafts.filter(entry => quizKind(entry) === 'lecture').map(entry => [entry.lectureId, entry]))
     const completed = lectures.filter(lecture => lecture.questions.length && historyLectures.has(lecture.id)).length
-    byId('overview').textContent = `المحاضرات: ${lectures.length} · الأسئلة: ${questions.size} · المحاضرات المكتملة: ${completed}`
+    byId('overview').textContent = `${lectures.length} محاضرات · ${questions.size} سؤال · ${completed} مكتملة`
+    const resume = state.drafts.at(-1)
+    const source = lectures.find(lecture => lecture.questions.length)
+    const hero = byId('heroStart')
+    hero.replaceChildren(resume ? 'تابع من حيث توقفت' : 'ابدأ المراجعة', icon('arrow-left'))
+    hero.disabled = !resume && !source
+    hero.onclick = () => launchAttempt(hero, data => resume ? data.drafts.find(entry => entry.id === resume.id) : openAttempt(data, source, content.subject.revision), resume ? 'drafts' : null)
+    byId('heroResume').hidden = !resume
+    byId('heroResume').textContent = resume ? `السؤال ${resume.cursor + 1} من ${resume.questions.length} · محاولتك بانتظارك` : ''
     const cards = document.createDocumentFragment()
     lectures.forEach((lecture, i) => cards.append(lectureCard(lecture, i, drafts.get(lecture.id), state.study, historyLectures.has(lecture.id))))
     byId('lectureGrid').replaceChildren(cards)
@@ -121,25 +141,28 @@ async function launchAttempt(control, change, returnLibrary = null) {
 
 function lectureCard(lecture, index, draft, study, completed) {
     const card = element('article', 'lecture-card')
+    card.dataset.tone = index % 4
     const start = button('', 'lecture-launch', () =>
         launchAttempt(start, state => openAttempt(state, lecture, content.subject.revision)))
-    const icon = element('span', 'lecture-icon', ['📘', '📗', '📕', '📓'][index % 4])
-    icon.setAttribute('aria-hidden', 'true')
+    const {total, answered, correct, coverage, mastery} = lectureProgress(lecture, study)
+    const top = element('span', 'lecture-top')
+    const mark = element('span', 'lecture-icon')
+    mark.append(icon(['layers', 'target', 'book', 'folder'][index % 4]))
+    top.append(mark, element('span', 'lecture-index', String(index + 1).padStart(2, '0')))
     const title = element('span', 'lecture-title', lecture.title.replace(/^LECTURE \d+:\s*/i, ''))
     title.dir = 'auto'
-    const {total, answered, correct, coverage, mastery} = lectureProgress(lecture, study)
-    start.append(icon, element('span', 'lecture-number', `المحاضرة ${index + 1}`), title,
-        element('span', 'lecture-status', draft ? `استكمال الاختبار · ${total} سؤال` : `${total} سؤال`))
+    const bottom = element('span', 'lecture-bottom')
+    const status = element('span', 'lecture-status', `${total} سؤال`)
+    const cta = element('span', 'lecture-cta', draft ? 'استكمال' : 'ابدأ الاختبار')
+    cta.append(icon('arrow-left'))
+    bottom.append(status, cta)
+    start.append(top, element('span', 'lecture-number', `المحاضرة ${index + 1}`), title, bottom)
     start.disabled = !total && !draft
-    card.append(start)
-    if (answered || completed) {
-        const progress = element('details', 'lecture-progress')
-        progress.append(element('summary', '', 'تقدّمي في المحاضرة'),
-            progressMetric('التغطية', coverage, `${answered} من ${total}`),
-            progressMetric('الإتقان', mastery, answered ? `${correct} من ${answered}` : 'بانتظار إجابة'))
-        if (completed) progress.append(button('مقارنة المحاولات', 'action-btn secondary-btn compact', () => showComparison(lecture)))
-        card.append(progress)
-    }
+    const progress = element('div', 'lecture-progress')
+    progress.append(progressMetric('التغطية', coverage, `${answered} من ${total}`),
+        progressMetric('الإتقان', mastery, answered ? `${correct} من ${answered}` : 'بانتظار إجابة'))
+    if (completed) progress.append(button('مقارنة المحاولات', 'action-btn secondary-btn compact', () => showComparison(lecture)))
+    card.append(start, progress)
     return card
 }
 
@@ -186,6 +209,8 @@ function renderQuestion(scroll = true) {
     progress.max = questions.length
     progress.value = cursor + 1
 
+    byId('questionNumber').textContent = String(cursor + 1).padStart(2, '0')
+    byId('quizPercent').textContent = `${Math.round((cursor + 1) / questions.length * 100)}%`
     const heading = byId('questionText')
     heading.textContent = question.text
     byId('questionFavorite').replaceChildren(favoriteButton(question.id, undefined, true))
@@ -247,6 +272,8 @@ function paintAnswer(fresh = false) {
     feedback.className = correct ? 'answer-status' : 'feedback-box error'
     feedback.textContent = !answered ? '' : correct ? 'إجابة صحيحة' :
         `إجابة خاطئة. ${question.explanation || 'راجع الاختيار المميز أعلاه.'}`
+    byId('whyToggle').disabled = !answered
+    byId('whyToggle').title = answered ? 'لماذا هذه الإجابة؟' : 'يظهر التعليل بعد الإجابة'
     byId('whyPanel').hidden = !answered
     education.setAnswered(answered)
     byId('previousQuestion').disabled = cursor === 0
@@ -372,7 +399,7 @@ function favoriteButton(id, onChange, inQuiz = false) {
             icon.setAttribute('viewBox', '0 0 24 24')
             icon.setAttribute('aria-hidden', 'true')
             const use = document.createElementNS('http://www.w3.org/2000/svg', 'use')
-            use.setAttribute('href', new URL('icons.svg#star', base).href)
+            use.setAttribute('href', new URL('icons.svg?v=1.2.0#star', base).href)
             icon.append(use)
             control.replaceChildren(icon, element('span', '', 'مفضلة'))
             control.setAttribute('aria-label', description)
@@ -572,6 +599,7 @@ function renderLibrary(type, title, items) {
     byId('libraryBody').replaceChildren(items)
     byId('libraryHeading').textContent = title
     byId('library').dataset.type = type
+    decorateLibrary(type)
     switchView('library')
     current = null
     byId('libraryHeading').focus()
@@ -716,7 +744,9 @@ function renderAchievements(items, state) {
         const row = element('article', 'library-row')
         const date = earned.get(id)
         const status = date ? `تحقّق في ${dateFormat.format(new Date(date))}` : progress[id] ?? 'لم يتحقق بعد'
-        row.append(element('strong', '', label), element('span', '', status))
+        row.classList.add('achievement-row')
+        row.dataset.earned = String(Boolean(date))
+        row.append(icon('award'), element('strong', '', label), element('span', '', status))
         items.append(row)
     }
 }
@@ -731,6 +761,7 @@ function setting(label, name, state) {
         await store.update(data => { data.settings[name] = checked })
         applySettings()
     })
+    checkbox.setAttribute('role', 'switch')
     row.append(element('span', '', label), checkbox)
     return row
 }
@@ -761,6 +792,7 @@ function applySettings() {
     control.dataset.theme = theme
     control.setAttribute('aria-label', `مظهر العرض: ${themeLabels[theme]}، التبديل إلى ${themeLabels[nextTheme(theme)]}`)
     control.title = themeLabels[theme]
+    byId('themeName').textContent = themeLabels[theme]
 }
 
 async function init() {
@@ -778,7 +810,7 @@ async function init() {
     key = storageKey(base, subject)
     store = createStore(key, notice)
     await store.update(() => {})
-    for (const [id, value] of [['subjectName', subject.title], ['credit', subject.credit], ['badge', subject.badge]]) {
+    for (const [id, value] of [['subjectName', subject.title], ['heroSubject', subject.title], ['quizSubject', subject.title], ['credit', subject.credit], ['badge', subject.badge]]) {
         byId(id).textContent = value ?? ''
         byId(id).hidden = !value
     }
@@ -844,7 +876,7 @@ translationMode.addEventListener('change', () => {
     byId('translationControls').hidden = !enabled
     translationToggle.setAttribute('aria-pressed', String(enabled))
 })
-for (const [trigger, panel] of [[byId('hintToggle'), byId('hintPanel')], [byId('speechToggle'), byId('speechPanel')]]) {
+for (const [trigger, panel] of [[byId('hintToggle'), byId('hintPanel')], [byId('speechToggle'), byId('speechPanel')], [byId('whyToggle'), byId('whyPanel')]]) {
     trigger.addEventListener('click', () => { panel.open = !panel.open })
     panel.addEventListener('toggle', () => trigger.setAttribute('aria-expanded', String(panel.open)))
 }
@@ -897,6 +929,11 @@ window.addEventListener('pagehide', () => {
     feedback.close()
 })
 window.addEventListener('pageshow', resumeClock)
+byId('menuToggle').addEventListener('click', () => {
+    const opened = byId('app').classList.toggle('menu-open')
+    byId('menuToggle').setAttribute('aria-expanded', String(opened))
+})
+byId('homeNav').addEventListener('click', () => showHome())
 byId('libraryBack').addEventListener('click', () => showHome())
 byId('retryLoad').addEventListener('click', () => location.reload())
 byId('reviewBtn').addEventListener('click', () => {

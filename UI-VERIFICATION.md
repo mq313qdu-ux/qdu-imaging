@@ -1,4 +1,30 @@
-# QDU interface verification — v1.1.1
+# QDU interface verification — v1.2.0
+
+## Executed on 6 November 2026 (Asia/Baghdad)
+
+- Production validation and all 13 Node tests passed, including the new tokens stylesheet and presentation module served under `/qdu-imaging/`.
+- Chromium 145: **96 quiz layout cases** (six widths × two themes × four translation modes × source/long synthetic content). Widths: 320, 375, 768, 1280, 1440, 1920px. Prompt/choice minimums are 20px/16px. Measured question/choice/translation/tool contrast was at least 5.55:1; this is a sampled check, not a complete accessibility audit.
+- **113 workspace cases**: home, favorites, mistakes, history, drafts, achievements, settings, results, full review/comparison, empty and load-error screens, exit and delete dialogs. No measured horizontal overflow or offscreen/undersized interactive controls. Settings persistence, favorite removal, delete cancellation and draft resume passed. The settings test waits for the asynchronous storage commit before reloading.
+- Quiz interactions passed: correct/wrong answers, independent translation, keyboard selection, 600ms auto-advance, cancellation on previous, restored answers, favorites, reload/resume, exit confirmation, a real full 23/24 result, review, and exactly one historical entry after reload.
+- Actual touch emulation passed in Chromium for start, translation, explanation, wrong/correct answers and auto-advance. RTL and LTR layouts passed overflow checks at 320, 768 and 1280px.
+- Light/Dark/System persistence, system changes, Reduced Motion and fullscreen enter/exit passed. No JavaScript errors or failed ordinary asset requests were recorded. A deliberately intercepted HTTP 500 was used only to exercise the error view.
+- Inspected before/after home and quiz captures, plus mobile dark, settings and redesigned result screenshots. Current captures wait for theme transitions to settle. Artifacts are ignored local files under `test-results/visual/` and `test-results/redesign/`.
+
+## Preservation
+
+`git diff v1.1.1 -- site/data` is empty: 4 lectures, 157 questions, 601 options and all enrichment remain unchanged. The quiz, study, storage, education, speech, keyboard and feedback engine files are also unchanged. UI-only helpers derive dashboard metrics from current source IDs and stored answers; they do not award points or mutate attempts. Fixtures use separate browser contexts and are never written into `site/`.
+
+## Limits
+
+Physical Android/iOS devices were not available. WebKit could not run because the executable required by the installed Python Playwright version was absent; no Safari result is claimed. Device voice quality was not auditioned; speech behavior is covered by mocked-voice unit tests and browser control checks. Browser testing supplements, but does not certify, accessibility across every assistive technology.
+
+## Reproduce
+
+Run `npm run validate -- --publish`, `npm test`, `node tools/serve.mjs 8098`, then `python tools/browser_qa.py` and `python tools/workspace_qa.py`. Python Playwright and Chromium must be installed for optional browser checks. Deployment still uploads only `site/`.
+
+---
+
+## Prior release: v1.1.1
 
 ## Scope
 

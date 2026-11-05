@@ -50,7 +50,7 @@ test('assets and JSON load from GitHub Pages-style subpaths without exposing the
         const loaded = await loadContent(site)
         const expected = await readContent(new URL('../site/data/', import.meta.url))
         assert.deepEqual(loaded, expected)
-        const assets = ['index.html', 'css/qdu.css', 'css/study.css', 'icons.svg', 'css/fonts.css', 'js/app.js', 'js/feedback.js', 'js/settings.js', 'favicon.svg']
+        const assets = ['index.html', 'css/tokens.css', 'css/qdu.css', 'css/study.css', 'icons.svg', 'css/fonts.css', 'js/app.js', 'js/presentation.js', 'js/feedback.js', 'js/settings.js', 'favicon.svg']
         for (const asset of assets) assert.equal((await fetch(new URL(asset, site))).status, 200, asset)
         const css = await (await fetch(new URL('css/fonts.css', site))).text()
         const fonts = [...css.matchAll(/url\((\.\.\/fonts\/[^)]+)\)/g)]

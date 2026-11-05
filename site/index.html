@@ -5,31 +5,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="منصة QDU للاختبارات التفاعلية ومراجعة المحاضرات">
     <title>منصة QDU للاختبار التفاعلي</title>
-    <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+    <link rel="icon" href="./favicon.svg?v=1.2.0" type="image/svg+xml">
     <link rel="stylesheet" href="./css/fonts.css">
-    <link rel="stylesheet" href="./css/qdu.css">
-    <link rel="stylesheet" href="./css/study.css">
-    <script type="module" src="./js/app.js?v=1.1.1"></script>
+    <link rel="stylesheet" href="./css/tokens.css?v=1.2.0">
+    <link rel="stylesheet" href="./css/qdu.css?v=1.2.0">
+    <link rel="stylesheet" href="./css/study.css?v=1.2.0">
+    <script type="module" src="./js/app.js?v=1.2.0"></script>
 </head>
 <body>
     <div class="app-container light-mode" id="app">
         <a class="skip-link" href="#mainContent">انتقل إلى المحتوى</a>
+        <aside class="app-rail" id="appNavigation" aria-label="التنقل الرئيسي">
+            <div class="rail-brand"><span class="brand-symbol"><svg class="qdu-icon " aria-hidden="true" viewBox="0 0 24 24"><use href="./icons.svg?v=1.2.0#brand"/></svg></span><div><b lang="en" dir="ltr">QDU<span class="brand-dot">.</span></b><span>مساحتك للتعلّم</span></div></div>
+            <p class="nav-caption">مساحة العمل</p>
+            <nav class="rail-navigation"><button class="nav-link" type="button" id="homeNav"><svg class="qdu-icon " aria-hidden="true" viewBox="0 0 24 24"><use href="./icons.svg?v=1.2.0#grid"/></svg><span>مساحة الدراسة</span><span class="nav-count" data-count="home" hidden></span></button>
+<button class="nav-link" type="button" data-library="drafts"><svg class="qdu-icon " aria-hidden="true" viewBox="0 0 24 24"><use href="./icons.svg?v=1.2.0#clock"/></svg><span>متابعة الدراسة</span><span class="nav-count" data-count="drafts" hidden></span></button>
+<button class="nav-link" type="button" data-library="favorites"><svg class="qdu-icon " aria-hidden="true" viewBox="0 0 24 24"><use href="./icons.svg?v=1.2.0#star"/></svg><span>المفضلة</span><span class="nav-count" data-count="favorites" hidden></span></button>
+<button class="nav-link" type="button" data-library="mistakes"><svg class="qdu-icon " aria-hidden="true" viewBox="0 0 24 24"><use href="./icons.svg?v=1.2.0#retry"/></svg><span>بنك الأخطاء</span><span class="nav-count" data-count="mistakes" hidden></span></button>
+<button class="nav-link" type="button" data-library="history"><svg class="qdu-icon " aria-hidden="true" viewBox="0 0 24 24"><use href="./icons.svg?v=1.2.0#history"/></svg><span>سجل المحاولات</span><span class="nav-count" data-count="history" hidden></span></button>
+<button class="nav-link" type="button" data-library="achievements"><svg class="qdu-icon " aria-hidden="true" viewBox="0 0 24 24"><use href="./icons.svg?v=1.2.0#award"/></svg><span>الإنجازات</span><span class="nav-count" data-count="achievements" hidden></span></button>
+<button class="nav-link" type="button" data-library="settings"><svg class="qdu-icon " aria-hidden="true" viewBox="0 0 24 24"><use href="./icons.svg?v=1.2.0#settings"/></svg><span>الإعدادات</span><span class="nav-count" data-count="settings" hidden></span></button>
+</nav>
+            <div class="rail-bottom"><div class="streak-mini"><svg class="qdu-icon " aria-hidden="true" viewBox="0 0 24 24"><use href="./icons.svg?v=1.2.0#spark"/></svg><div><strong id="railStreak">0 أيام</strong><span>سلسلة الدراسة الحالية</span></div></div><p>خطوة صغيرة اليوم.<br>فرق كبير بكرة.</p><span class="rail-signature" lang="en">LEARN. PRACTICE. GROW.</span></div>
+        </aside>
         <header class="site-header">
-            <div class="site-brand">
-                <h1 class="site-title">منصة <bdi lang="en">QDU</bdi> للاختبار التفاعلي</h1>
-                <div class="site-subject">
-                    <p id="subjectName" dir="auto" hidden></p>
-                    <span class="demo-badge" id="badge" hidden></span>
-                </div>
-                <p class="student-credit" id="credit" dir="auto" hidden></p>
+            <div class="header-heading">
+                <button type="button" class="utility-btn menu-toggle" id="menuToggle" aria-label="فتح قائمة التنقل" aria-controls="appNavigation" aria-expanded="false"><svg class="qdu-icon " aria-hidden="true" viewBox="0 0 24 24"><use href="./icons.svg?v=1.2.0#menu"/></svg></button>
+                <div><p class="header-eyebrow" lang="en">QDU / LEARNING SPACE</p><h1 class="site-title" id="pageTitle">مساحة الدراسة</h1></div>
             </div>
             <div class="site-controls" aria-label="خيارات العرض">
-                <button type="button" class="utility-btn" id="themeToggle" aria-label="تغيير مظهر العرض" data-theme="system" disabled>
-                    <svg class="qdu-icon sun-icon" aria-hidden="true" viewBox="0 0 24 24"><use href="./icons.svg#sun"/></svg><svg class="qdu-icon moon-icon" aria-hidden="true" viewBox="0 0 24 24"><use href="./icons.svg#moon"/></svg>
-                </button>
-                <button type="button" class="utility-btn" id="fullscreenToggle" aria-label="ملء الشاشة" aria-pressed="false">
-                    <svg class="qdu-icon " aria-hidden="true" viewBox="0 0 24 24"><use href="./icons.svg#expand"/></svg>
-                </button>
+                <div class="subject-chip"><svg class="qdu-icon " aria-hidden="true" viewBox="0 0 24 24"><use href="./icons.svg?v=1.2.0#book"/></svg><span id="subjectName" dir="auto" hidden></span></div>
+                <button type="button" class="utility-btn theme-switch" id="themeToggle" aria-label="تغيير مظهر العرض" data-theme="system" disabled><span class="theme-orb"><svg class="qdu-icon sun-icon" aria-hidden="true" viewBox="0 0 24 24"><use href="./icons.svg?v=1.2.0#sun"/></svg><svg class="qdu-icon moon-icon" aria-hidden="true" viewBox="0 0 24 24"><use href="./icons.svg?v=1.2.0#moon"/></svg></span><span id="themeName">النظام</span></button>
+                <button type="button" class="utility-btn" id="fullscreenToggle" aria-label="ملء الشاشة" aria-pressed="false"><svg class="qdu-icon " aria-hidden="true" viewBox="0 0 24 24"><use href="./icons.svg?v=1.2.0#expand"/></svg></button>
             </div>
         </header>
         <main class="content-wrapper" id="mainContent" tabindex="-1">
@@ -42,52 +49,52 @@
                 <button type="button" class="action-btn primary-btn" id="retryLoad">إعادة التحميل</button>
             </section>
             <section id="lectureSelection" aria-labelledby="lecturesHeading" hidden>
-                <h2 class="visually-hidden" id="lecturesHeading" tabindex="-1">المحاضرات</h2>
+                <div class="home-hero">
+                    <div class="hero-copy"><span class="hero-kicker"><span></span><b id="heroSubject"></b> · رحلتك إلى الإتقان</span><h2>كل سؤال،<br><em>خطوة أقرب.</em></h2><p>افهم أكثر، اختبر نفسك، وشوف تقدّمك.<br>مساحة واحدة لكل تفاصيل دراستك.</p><button id="heroStart" type="button" class="action-btn hero-cta">ابدأ المراجعة <svg class="qdu-icon " aria-hidden="true" viewBox="0 0 24 24"><use href="./icons.svg?v=1.2.0#arrow-left"/></svg></button><span id="heroResume" class="hero-resume" hidden></span></div>
+                    <div class="hero-art" aria-hidden="true"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><span class="art-spark spark-a">+</span><span class="art-spark spark-b">+</span><div class="art-card art-card-back"></div><div class="art-card art-card-front"><span class="art-label" lang="en">YOUR NEXT CHAPTER</span><span class="art-book"><svg class="qdu-icon " aria-hidden="true" viewBox="0 0 24 24"><use href="./icons.svg?v=1.2.0#book"/></svg></span><div class="art-lines"><i></i><i></i></div><span class="art-check"><svg class="qdu-icon " aria-hidden="true" viewBox="0 0 24 24"><use href="./icons.svg?v=1.2.0#check"/></svg></span></div><span class="art-pill"><svg class="qdu-icon " aria-hidden="true" viewBox="0 0 24 24"><use href="./icons.svg?v=1.2.0#spark"/></svg> تعلّم. جرّب. أتقن.</span></div>
+                </div>
+                <div class="overview-grid" aria-label="ملخص تقدّمك">
+                    <article class="overview-card"><span class="overview-icon violet"><svg class="qdu-icon " aria-hidden="true" viewBox="0 0 24 24"><use href="./icons.svg?v=1.2.0#layers"/></svg></span><div><p>تغطية الأسئلة</p><strong id="coverageValue">0%</strong><span id="coverageDetail"></span></div><div class="mini-track"><i id="coverageTrack"></i></div></article>
+                    <article class="overview-card"><span class="overview-icon mint"><svg class="qdu-icon " aria-hidden="true" viewBox="0 0 24 24"><use href="./icons.svg?v=1.2.0#target"/></svg></span><div><p>مستوى الإتقان</p><strong id="masteryValue">—</strong><span>بحسب آخر إجابة لكل سؤال محلول</span></div></article>
+                    <article class="overview-card"><span class="overview-icon peach"><svg class="qdu-icon " aria-hidden="true" viewBox="0 0 24 24"><use href="./icons.svg?v=1.2.0#award"/></svg></span><div><p>اختبارات مكتملة</p><strong id="completedValue">0</strong><span>كل محاولة تضيف إلى خبرتك</span></div></article>
+                </div>
+                <div class="section-heading"><div><span class="eyebrow" lang="en">YOUR CLASSROOM</span><h2 id="lecturesHeading" tabindex="-1">مكتبة المحاضرات</h2></div><p id="overview"></p></div>
                 <div class="quiz-container empty-state" id="emptyState" hidden>
                     <svg class="book-mark" aria-hidden="true" viewBox="0 0 24 24"><path d="M12 6C9 3 5 3 3 4v14c3-1 6-1 9 2 3-3 6-3 9-2V4c-2-1-6-1-9 2v14"/></svg>
                     <h3>لا توجد محاضرات بعد</h3>
                     <p>ستظهر المحاضرات هنا عند إضافة بيانات المادة.</p>
                 </div>
                 <div class="lecture-grid" id="lectureGrid"></div>
-                <details class="study-library">
-                    <summary>أدوات الدراسة</summary>
-                    <p id="overview"></p>
-                    <nav aria-label="أدوات الدراسة">
-                        <button type="button" class="action-btn secondary-btn compact" data-library="history">السجل</button>
-                        <button type="button" class="action-btn secondary-btn compact" data-library="favorites">المفضلة</button>
-                        <button type="button" class="action-btn secondary-btn compact" data-library="mistakes">الأخطاء</button>
-                        <button type="button" class="action-btn secondary-btn compact" data-library="drafts">اختبارات غير مكتملة</button>
-                        <button type="button" class="action-btn secondary-btn compact" data-library="achievements">الإنجازات</button>
-                        <button type="button" class="action-btn secondary-btn compact" data-library="settings">الإعدادات</button>
-                    </nav>
-                </details>
+                <div class="home-note"><span class="demo-badge" id="badge" hidden></span><p id="credit" dir="auto" hidden></p><span>تقدّمك محفوظ في هذا المتصفح</span></div>
             </section>
             <section id="quizSection" aria-labelledby="quizTitle" hidden>
                 <div class="study-card">
                     <header class="study-header">
                         <div class="study-meta">
-                            <button type="button" class="study-back" id="leaveQuiz"><svg class="qdu-icon " aria-hidden="true" viewBox="0 0 24 24"><use href="./icons.svg#arrow-right"/></svg><span>المحاضرات</span></button>
-                            <div class="study-clock"><svg class="qdu-icon " aria-hidden="true" viewBox="0 0 24 24"><use href="./icons.svg#clock"/></svg><span class="visually-hidden">الوقت المنقضي</span><time id="quizTime" dir="ltr" aria-label="وقت الاختبار"></time></div>
+                            <button type="button" class="study-back" id="leaveQuiz"><svg class="qdu-icon " aria-hidden="true" viewBox="0 0 24 24"><use href="./icons.svg?v=1.2.0#arrow-right"/></svg><span>المحاضرات</span></button>
+                            <div class="study-clock"><svg class="qdu-icon " aria-hidden="true" viewBox="0 0 24 24"><use href="./icons.svg?v=1.2.0#clock"/></svg><span class="visually-hidden">الوقت المنقضي</span><time id="quizTime" dir="ltr" aria-label="وقت الاختبار"></time></div>
                         </div>
-                        <p class="study-eyebrow">اختبار المحاضرة</p>
+                        <p class="study-eyebrow"><span id="quizSubject"></span> / محاضرتك الحالية <span class="live-dot"></span></p>
                         <h2 class="study-title" id="quizTitle" dir="auto"></h2>
                         <p id="quizRevision" hidden></p>
                         <div class="study-progress-label">
                             <p id="questionCounter"></p>
-                            <span>تقدّم الاختبار</span>
+                            <span id="quizPercent" dir="ltr"></span>
                         </div>
                         <progress class="progress-bar" id="progressBar" aria-label="تقدم الاختبار"></progress>
                     </header>
                     <div class="study-question" id="questionSection">
                         <div class="study-prompt">
+                            <div class="prompt-label"><span id="questionNumber" dir="ltr">01</span><p>اختر الإجابة الصحيحة</p></div>
                             <h3 id="questionText" dir="auto" tabindex="-1" data-protected></h3>
                             <p class="translation" id="questionTranslation" dir="rtl" lang="ar-IQ" data-protected hidden></p>
                         </div>
                         <div class="study-tools">
                             <div class="study-toolbar" role="group" aria-label="أدوات السؤال">
-                                <button type="button" class="question-tool translate-btn" id="translationToggle" aria-controls="translationControls questionTranslation" aria-pressed="false"><svg class="qdu-icon " aria-hidden="true" viewBox="0 0 24 24"><use href="./icons.svg#languages"/></svg><span>ترجمة</span></button>
-                                <button type="button" class="question-tool audio-tool" id="speechToggle" aria-controls="speechPanel" aria-expanded="false"><svg class="qdu-icon " aria-hidden="true" viewBox="0 0 24 24"><use href="./icons.svg#volume"/></svg><span>استماع</span></button>
-                                <button type="button" class="question-tool hint-tool" id="hintToggle" aria-controls="hintPanel" aria-expanded="false"><svg class="qdu-icon " aria-hidden="true" viewBox="0 0 24 24"><use href="./icons.svg#bulb"/></svg><span>تلميح</span></button>
+                                <button type="button" class="question-tool translate-btn" id="translationToggle" aria-controls="translationControls questionTranslation" aria-pressed="false"><svg class="qdu-icon " aria-hidden="true" viewBox="0 0 24 24"><use href="./icons.svg?v=1.2.0#languages"/></svg><span>ترجمة</span></button>
+                                <button type="button" class="question-tool audio-tool" id="speechToggle" aria-controls="speechPanel" aria-expanded="false"><svg class="qdu-icon " aria-hidden="true" viewBox="0 0 24 24"><use href="./icons.svg?v=1.2.0#volume"/></svg><span>استماع</span></button>
+                                <button type="button" class="question-tool hint-tool" id="hintToggle" aria-controls="hintPanel" aria-expanded="false"><svg class="qdu-icon " aria-hidden="true" viewBox="0 0 24 24"><use href="./icons.svg?v=1.2.0#bulb"/></svg><span>تلميح</span></button>
+                                <button type="button" class="question-tool why-tool" id="whyToggle" aria-controls="whyPanel" aria-expanded="false" disabled><svg class="qdu-icon " aria-hidden="true" viewBox="0 0 24 24"><use href="./icons.svg?v=1.2.0#help"/></svg><span>التعليل</span></button>
                                 <span id="questionFavorite"></span>
                             </div>
                             <div class="translation-controls" id="translationControls" dir="rtl" hidden>
@@ -135,15 +142,15 @@
                         </details>
                         <footer class="study-footer">
                         <div id="quizNavigation" class="quiz-navigation" dir="rtl">
-                            <button class="action-btn secondary-btn" type="button" id="previousQuestion" disabled><svg class="qdu-icon " aria-hidden="true" viewBox="0 0 24 24"><use href="./icons.svg#arrow-right"/></svg><span>السابق</span></button>
-                            <button class="action-btn primary-btn" type="button" id="nextQuestion" disabled><span id="nextQuestionLabel">التالي</span><svg class="qdu-icon " aria-hidden="true" viewBox="0 0 24 24"><use href="./icons.svg#arrow-left"/></svg></button>
+                            <button class="action-btn secondary-btn" type="button" id="previousQuestion" disabled><svg class="qdu-icon " aria-hidden="true" viewBox="0 0 24 24"><use href="./icons.svg?v=1.2.0#arrow-right"/></svg><span>السابق</span></button>
+                            <button class="action-btn primary-btn" type="button" id="nextQuestion" disabled><span id="nextQuestionLabel">التالي</span><svg class="qdu-icon " aria-hidden="true" viewBox="0 0 24 24"><use href="./icons.svg?v=1.2.0#arrow-left"/></svg></button>
                         </div>
                         <p class="keyboard-help">لوحة المفاتيح <bdi>↑ ↓</bdi> لاختيار الإجابة، <bdi>Space</bdi> أو <bdi>Ctrl</bdi> للتأكيد، <bdi>→</bdi> للتالي و<bdi>←</bdi> للسابق.</p>
                         </footer>
                     </div>
                 </div>
                 <dialog class="quiz-container exit-dialog" id="exitQuiz" aria-labelledby="exitTitle" aria-describedby="exitDescription">
-                    <h2 id="exitTitle">تريد تطلع من الاختبار؟</h2>
+                    <span class="dialog-icon"><svg class="qdu-icon " aria-hidden="true" viewBox="0 0 24 24"><use href="./icons.svg?v=1.2.0#clock"/></svg></span><h2 id="exitTitle">تريد تطلع من الاختبار؟</h2>
                     <p id="exitDescription">المحاولة بعد ما خلصت. تگدر تكمل من نفس السؤال من صفحة الاختبارات غير المكتملة.</p>
                     <form method="dialog" class="question-tools">
                         <button type="submit" value="continue" class="action-btn primary-btn compact" autofocus>متابعة الاختبار</button>
@@ -153,10 +160,14 @@
             </section>
             <section id="resultsSection" aria-labelledby="resultsHeading" hidden>
                 <div class="quiz-container results-container">
-                    <h2 id="resultsHeading" tabindex="-1">النتيجة النهائية</h2>
+                    <div class="result-summary"><div class="result-copy">
+                    <div class="result-heading"><span class="result-medal"><svg class="qdu-icon " aria-hidden="true" viewBox="0 0 24 24"><use href="./icons.svg?v=1.2.0#award"/></svg></span><span class="eyebrow" lang="en">SESSION COMPLETE</span><h2 id="resultsHeading" tabindex="-1">كل محاولة تصنع فرقًا.</h2></div>
                     <p id="resultLecture" dir="auto"></p>
                     <p id="resultMeta"></p>
                     <p id="resultGrade" class="result-grade"></p>
+                    <div class="performance-badge" id="performanceBadge"></div>
+                    <p class="results-message" id="resultsMessage"></p>
+                    </div><div class="result-visual">
                     <div class="results-chart-wrapper">
                         <svg viewBox="0 0 200 200" class="circular-progress" aria-hidden="true">
                             <defs>
@@ -172,22 +183,21 @@
                             <div class="results-label">النسبة المئوية</div>
                         </div>
                     </div>
-                    <div class="performance-badge" id="performanceBadge"></div>
+                    </div></div>
                     <div class="results-stats">
                         <div class="stat-card correct-card">
-                            <span class="stat-icon" aria-hidden="true">✅</span>
+                            <svg class="qdu-icon stat-icon" aria-hidden="true" viewBox="0 0 24 24"><use href="./icons.svg?v=1.2.0#check"/></svg>
                             <div class="stat-value" id="correctAnswers"></div><div class="stat-label">إجابات صحيحة</div>
                         </div>
                         <div class="stat-card wrong-card">
-                            <span class="stat-icon" aria-hidden="true">❌</span>
+                            <svg class="qdu-icon stat-icon" aria-hidden="true" viewBox="0 0 24 24"><use href="./icons.svg?v=1.2.0#close"/></svg>
                             <div class="stat-value" id="wrongAnswers"></div><div class="stat-label">إجابات خاطئة</div>
                         </div>
                         <div class="stat-card total-card">
-                            <span class="stat-icon" aria-hidden="true">📊</span>
+                            <svg class="qdu-icon stat-icon" aria-hidden="true" viewBox="0 0 24 24"><use href="./icons.svg?v=1.2.0#layers"/></svg>
                             <div class="stat-value" id="totalQuestions"></div><div class="stat-label">مجموع الأسئلة</div>
                         </div>
                     </div>
-                    <p class="results-message" id="resultsMessage"></p>
                     <div class="action-buttons">
                         <button type="button" class="action-btn primary-btn" id="reviewBtn" aria-controls="reviewContainer" aria-expanded="false">مراجعة الاختبار</button>
                         <button type="button" class="action-btn secondary-btn" id="retryQuiz">إعادة الاختبار</button>
@@ -202,7 +212,7 @@
                 </div>
             </section>
             <dialog class="quiz-container exit-dialog" id="deleteDraft" aria-labelledby="deleteDraftTitle" aria-describedby="deleteDraftDescription">
-                <h2 id="deleteDraftTitle">حذف المحاولة غير المكتملة؟</h2>
+                <span class="dialog-icon"><svg class="qdu-icon " aria-hidden="true" viewBox="0 0 24 24"><use href="./icons.svg?v=1.2.0#trash"/></svg></span><h2 id="deleteDraftTitle">حذف المحاولة غير المكتملة؟</h2>
                 <p id="deleteDraftDescription">سيُحذف موضع الاستكمال. تبقى الإجابات السابقة محسوبة في إحصاءات الدراسة.</p>
                 <form method="dialog" class="question-tools">
                     <button type="submit" value="cancel" class="action-btn secondary-btn compact" autofocus>إلغاء</button>
@@ -211,10 +221,11 @@
             </dialog>
             <section class="quiz-container" id="library" aria-labelledby="libraryHeading" hidden>
                 <button type="button" class="action-btn secondary-btn compact" id="libraryBack">العودة للمحاضرات</button>
-                <h2 id="libraryHeading" tabindex="-1"></h2>
+                <div class="library-heading"><span class="library-emblem" id="libraryEmblem" aria-hidden="true"></span><div><span class="eyebrow" lang="en">YOUR STUDY SPACE</span><h2 id="libraryHeading" tabindex="-1"></h2><p id="libraryDescription"></p></div></div>
                 <div id="libraryBody"></div>
             </section>
         </main>
+        <footer class="site-footer"><b lang="en" dir="ltr">QDU<span>.</span></b><span>مساحة أهدأ. تعلّم أعمق.</span></footer>
     </div>
 </body>
 </html>
