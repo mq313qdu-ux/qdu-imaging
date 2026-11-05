@@ -87,7 +87,6 @@ function showHome(focus = true) {
     const cards = document.createDocumentFragment()
     lectures.forEach((lecture, i) => cards.append(lectureCard(lecture, i, drafts.get(lecture.id), state.study, historyLectures.has(lecture.id))))
     byId('lectureGrid').replaceChildren(cards)
-    document.querySelector('.progress-guide').hidden = lectures.length === 0
     byId('emptyState').hidden = lectures.length > 0
     switchView('lectureSelection')
     current = null
@@ -110,10 +109,10 @@ async function launchAttempt(control, change, returnLibrary = null) {
         current = attempt
         quizOrigin = returnLibrary
         switchView('quizSection')
-        byId('leaveQuiz').textContent = returnLibrary ? 'حفظ والعودة' : 'العودة للمحاضرات'
+        byId('leaveQuiz').setAttribute('aria-label', returnLibrary ? 'حفظ والعودة' : 'العودة للمحاضرات')
         startClock()
         window.addEventListener('beforeunload', warnBeforeUnload)
-        renderQuestion()
+        renderQuestion(false)
     } finally {
         launchingQuiz = false
         control.disabled = false
@@ -122,22 +121,25 @@ async function launchAttempt(control, change, returnLibrary = null) {
 
 function lectureCard(lecture, index, draft, study, completed) {
     const card = element('article', 'lecture-card')
-    const icon = element('span', 'lecture-icon')
-    icon.append(byId('bookIcon').content.cloneNode(true))
-    const title = element('h3', 'lecture-title', lecture.title)
+    const start = button('', 'lecture-launch', () =>
+        launchAttempt(start, state => openAttempt(state, lecture, content.subject.revision)))
+    const icon = element('span', 'lecture-icon', ['📘', '📗', '📕', '📓'][index % 4])
+    icon.setAttribute('aria-hidden', 'true')
+    const title = element('span', 'lecture-title', lecture.title.replace(/^LECTURE \d+:\s*/i, ''))
     title.dir = 'auto'
     const {total, answered, correct, coverage, mastery} = lectureProgress(lecture, study)
-    card.append(icon, element('p', 'lecture-number', `المحاضرة ${index + 1}`), title,
-        element('p', 'lecture-status', `عدد الأسئلة: ${total}`),
-        progressMetric('التغطية', coverage, `${answered} من ${total}`),
-        progressMetric('الإتقان', mastery, answered ? `${correct} من ${answered}` : 'بانتظار إجابة'))
-    const actions = element('div', 'lecture-actions')
-    const start = button(draft ? 'استكمال الاختبار' : 'بدء الاختبار', 'action-btn primary-btn compact', () =>
-        launchAttempt(start, state => openAttempt(state, lecture, content.subject.revision)))
+    start.append(icon, element('span', 'lecture-number', `المحاضرة ${index + 1}`), title,
+        element('span', 'lecture-status', draft ? `استكمال الاختبار · ${total} سؤال` : `${total} سؤال`))
     start.disabled = !total && !draft
-    actions.append(start)
-    if (completed) actions.append(button('مقارنة المحاولات', 'action-btn secondary-btn compact', () => showComparison(lecture)))
-    card.append(actions)
+    card.append(start)
+    if (answered || completed) {
+        const progress = element('details', 'lecture-progress')
+        progress.append(element('summary', '', 'تقدّمي في المحاضرة'),
+            progressMetric('التغطية', coverage, `${answered} من ${total}`),
+            progressMetric('الإتقان', mastery, answered ? `${correct} من ${answered}` : 'بانتظار إجابة'))
+        if (completed) progress.append(button('مقارنة المحاولات', 'action-btn secondary-btn compact', () => showComparison(lecture)))
+        card.append(progress)
+    }
     return card
 }
 
@@ -160,12 +162,25 @@ function percentLabel(value) {
     return `${rounded}%`
 }
 
-function renderQuestion() {
+function withAvailableTranslation(question) {
+    const updated = content.questions.get(question.id)
+    if (!updated?.translation || updated.text !== question.text) return question
+    const options = new Map(updated.options.map(option => [option.id, option.text]))
+    const translations = {...question.optionTranslations}
+    for (const {id, text} of question.options) {
+        const translated = updated.optionTranslations?.[id]
+        if (!translations[id] && translated && options.get(id) === text) translations[id] = translated
+    }
+    return {...question, translation: question.translation || updated.translation, optionTranslations: translations}
+}
+
+function renderQuestion(scroll = true) {
     const {cursor, title, questions, revision} = current
-    const question = questions[cursor]
-    byId('quizTitle').textContent = title
+    const question = withAvailableTranslation(questions[cursor])
+    byId('quizTitle').textContent = title.replace(/^LECTURE \d+:\s*/i, '')
     const old = revision !== content.subject.revision ? ` · إصدار المحتوى ${revision}` : ''
     byId('quizRevision').textContent = `${quizTypes[quizKind(current)]}${old}`
+    byId('quizRevision').hidden = !old && quizKind(current) === 'lecture'
     byId('questionCounter').textContent = `السؤال ${cursor + 1} من ${questions.length}`
     const progress = byId('progressBar')
     progress.max = questions.length
@@ -173,15 +188,15 @@ function renderQuestion() {
 
     const heading = byId('questionText')
     heading.textContent = question.text
-    byId('questionFavorite').replaceChildren(favoriteButton(question.id))
+    byId('questionFavorite').replaceChildren(favoriteButton(question.id, undefined, true))
     const options = document.createDocumentFragment()
     const translations = []
-    for (const [index, option] of question.options.entries()) {
+    for (const option of question.options) {
         const choice = button('', 'option-btn', () => submitAnswer(option.id))
         choice.dataset.optionId = option.id
         const original = element('span', 'choice-original')
         original.dir = 'auto'
-        original.append(element('bdi', 'choice-index', `${index + 1}.`), ' ', element('bdi', '', option.text))
+        original.append(element('bdi', '', option.text))
         const source = question.optionTranslations
         const translation = element('span', 'choice-translation', source && Object.hasOwn(source, option.id)
             ? source[option.id] : 'ماكو ترجمة مضافة لهذا الاختيار.')
@@ -194,12 +209,13 @@ function renderQuestion() {
         options.append(choice)
     }
     byId('quizOptions').replaceChildren(options)
+    byId('speechPanel').open = false
     education.setQuestion(question, translations)
     speech.setQuestion(question)
     paintAnswer()
     if (!exitDialog.open) {
         heading.focus({preventScroll: true})
-        window.scrollTo(0, byId('quizSection').getBoundingClientRect().top + window.scrollY - 12)
+        if (scroll) window.scrollTo(0, byId('quizSection').getBoundingClientRect().top + window.scrollY - 12)
     }
 }
 
@@ -226,7 +242,8 @@ function paintAnswer(fresh = false) {
     const feedback = byId('answerFeedback')
     feedback.className = correct ? 'answer-status' : 'feedback-box error'
     feedback.textContent = !answered ? '' : correct ? 'إجابة صحيحة' :
-        `إجابة خاطئة. ${question.explanation || 'ماكو تعليل مضاف للإجابة الصحيحة بعد. راجع الاختيار المميز أعلاه.'}`
+        `إجابة خاطئة. ${question.explanation || 'راجع الاختيار المميز أعلاه.'}`
+    byId('whyPanel').hidden = !answered
     education.setAnswered(answered)
     byId('previousQuestion').disabled = cursor === 0
     byId('nextQuestion').disabled = !answered
@@ -312,7 +329,8 @@ function stopClock() {
 
 function renderTime() {
     const pending = activeSince === null ? 0 : performance.now() - activeSince
-    byId('quizTime').textContent = `وقت الاختبار: ${duration(sessionTimeMs + pending)}`
+    const seconds = Math.floor((sessionTimeMs + pending) / 1000)
+    byId('quizTime').textContent = `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`
     if (pending >= 5000) checkpointTime()
 }
 
@@ -333,8 +351,8 @@ function warnBeforeUnload(event) {
     event.returnValue = true
 }
 
-function favoriteButton(id, onChange) {
-    const control = button('', 'action-btn secondary-btn compact', async () => {
+function favoriteButton(id, onChange, inQuiz = false) {
+    const control = button('', inQuiz ? 'question-tool favorite-tool' : 'action-btn secondary-btn compact', async () => {
         control.disabled = true
         const save = control.getAttribute('aria-pressed') !== 'true'
         const saved = await store.update(state => setFavorite(state, id, save))
@@ -343,7 +361,15 @@ function favoriteButton(id, onChange) {
         onChange?.()
     })
     function paint(saved) {
-        control.textContent = saved ? 'إزالة من المفضلة' : 'إضافة إلى المفضلة'
+        const description = saved ? 'إزالة من المفضلة' : 'إضافة إلى المفضلة'
+        if (inQuiz) {
+            const icon = element('span', '', saved ? '★' : '☆')
+            icon.setAttribute('aria-hidden', 'true')
+            control.replaceChildren(icon, ' مفضلة')
+            control.setAttribute('aria-label', description)
+        } else {
+            control.textContent = description
+        }
         control.setAttribute('aria-pressed', String(saved))
     }
     paint(store.read().favorites.includes(id))
@@ -351,6 +377,7 @@ function favoriteButton(id, onChange) {
 }
 
 function reviewItem(question, selected, index) {
+    question = withAvailableTranslation(question)
     const item = element('article', 'review-question')
     item.dataset.protected = ''
     const title = element('h3', 'review-question-text', index === undefined ? question.text : `${index + 1}. ${question.text}`)
@@ -779,10 +806,9 @@ function setStudyFocus(enabled) {
     paintFullscreen()
 }
 function paintFullscreen() {
-    const fullscreen = Boolean(document.fullscreenElement)
+    const fullscreen = Boolean(document.fullscreenElement) || studyFocus
     byId('fullscreenToggle').setAttribute('aria-pressed', String(fullscreen))
-    byId('studyFullscreen').setAttribute('aria-pressed', String(fullscreen || studyFocus))
-    byId('studyFullscreen').textContent = fullscreen || studyFocus ? 'إنهاء وضع الدراسة' : 'وضع الدراسة بملء الشاشة'
+    byId('fullscreenToggle').setAttribute('aria-label', fullscreen ? 'إنهاء وضع الدراسة' : 'ملء الشاشة')
 }
 async function toggleFullscreen() {
     if (studyFocus) return setStudyFocus(false)
@@ -794,10 +820,25 @@ async function toggleFullscreen() {
         else notice('تعذّر تبديل وضع ملء الشاشة في هذا المتصفح.')
     }
 }
-byId('fullscreenToggle').hidden = !document.fullscreenEnabled
 byId('fullscreenToggle').addEventListener('click', toggleFullscreen)
-byId('studyFullscreen').addEventListener('click', toggleFullscreen)
 document.addEventListener('fullscreenchange', paintFullscreen)
+
+const translationMode = byId('translationMode')
+const translationToggle = byId('translationToggle')
+translationToggle.addEventListener('click', () => {
+    translationMode.value = translationMode.value === 'none' ? 'both' : 'none'
+    translationMode.dispatchEvent(new Event('change'))
+})
+translationMode.addEventListener('change', () => {
+    const enabled = translationMode.value !== 'none'
+    if (!enabled && document.activeElement === translationMode) translationToggle.focus()
+    byId('translationControls').hidden = !enabled
+    translationToggle.setAttribute('aria-pressed', String(enabled))
+})
+for (const [trigger, panel] of [[byId('hintToggle'), byId('hintPanel')], [byId('speechToggle'), byId('speechPanel')]]) {
+    trigger.addEventListener('click', () => { panel.open = !panel.open })
+    panel.addEventListener('toggle', () => trigger.setAttribute('aria-expanded', String(panel.open)))
+}
 byId('leaveQuiz').addEventListener('click', () => {
     cancelAdvance()
     speech.stop()

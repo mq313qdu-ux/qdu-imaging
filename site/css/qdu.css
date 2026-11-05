@@ -1452,4 +1452,161 @@ button.library-row:hover { border-color: #8171c8; }
     .deterrence #quizSection:not([hidden]) .print-notice { display: block; }
 }
 
+/* Original QDU layout, with the added study controls kept near their context. */
+.top-controls {
+    position: fixed;
+    inset: 20px auto auto 20px;
+}
+.app-container .control-btn {
+    background: #fff;
+    color: #4a90e2;
+    border: 0;
+    box-shadow: 0 4px 12px rgb(0 0 0 / 15%);
+}
+.app-container.dark-mode .control-btn { background: #2c3e50; color: #f39c12; }
+.app-container .control-btn:hover { transform: scale(1.08); }
+.control-btn .moon-icon, .dark-mode .control-btn .sun-icon { display: none; }
+.dark-mode .control-btn .moon-icon { display: inline; }
+.header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 40px 112px 30px;
+}
+.app-container .platform-title {
+    margin: 0;
+    padding: 20px 30px;
+    background-image: linear-gradient(135deg, #566cd0, #764ba2);
+    box-shadow: 0 5px 20px rgb(0 0 0 / 10%);
+}
+.app-container.dark-mode .platform-title {
+    background-image: linear-gradient(135deg, #b3bfff, #dfc0ff);
+}
+.app-container.light-mode .subject-name { background: white; color: #2c3e50; }
+.app-container .subject-name { margin: 0; }
+.lecture-grid { grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr)); }
+.app-container .lecture-card {
+    display: block;
+    padding: 0;
+    border: 0;
+    box-shadow: 0 5px 20px rgb(0 0 0 / 10%);
+}
+.app-container.dark-mode .lecture-card,
+.app-container.dark-mode .quiz-container { background: #2c3e50; }
+.lecture-card:last-child { grid-column: 1 / -1; width: min(100%, 400px); justify-self: center; }
+.lecture-card:hover { transform: translateY(-5px); }
+.lecture-launch {
+    display: grid;
+    width: 100%;
+    justify-items: center;
+    color: inherit;
+    background: transparent;
+    border: 0;
+    padding: 30px;
+    cursor: pointer;
+}
+.lecture-launch:disabled { cursor: default; }
+.lecture-launch:focus-visible { outline-offset: -5px; }
+.lecture-icon { line-height: 1; }
+.lecture-progress {
+    margin: 0 22px 16px;
+    border-top: 1px solid var(--line);
+    text-align: start;
+}
+.lecture-progress summary, .study-library summary {
+    padding: 10px 0;
+    min-height: 44px;
+    cursor: pointer;
+    font-weight: 700;
+}
+.lecture-progress .action-btn { margin-top: 8px; }
+.study-library {
+    max-width: 800px;
+    margin: 26px auto 0;
+    padding: 0 16px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--surface);
+}
+.study-library nav { display: flex; flex-wrap: wrap; gap: 8px; padding: 10px 0 14px; }
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+}
+.app-container .quiz-container {
+    border: 0;
+    border-radius: 25px;
+    box-shadow: 0 10px 40px rgb(0 0 0 / 10%);
+}
+.quiz-utilities { display: flex; direction: ltr; align-items: center; gap: 8px; margin-bottom: 8px; }
+.quiz-time, .quiz-back {
+    display: inline-flex;
+    min-height: 36px;
+    align-items: center;
+    border-radius: 999px;
+    padding: 6px 12px;
+    font-size: .9rem;
+    font-weight: 700;
+    margin: 0;
+}
+.quiz-time { background: linear-gradient(135deg, #ffd36e, #ffa888); color: #45220b; }
+.quiz-back { border: 1px solid var(--line); background: var(--surface-alt); color: var(--accent-text); cursor: pointer; }
+.question-section { direction: ltr; text-align: left; }
+.question-header { flex-wrap: nowrap; align-items: flex-start; }
+.question-text { min-width: 0; }
+#questionText:focus { outline: none; }
+.question-toolbar { display: flex; direction: rtl; flex: none; flex-wrap: wrap; gap: 6px; max-width: 100%; }
+.question-tool {
+    min-height: 44px;
+    padding: 7px 10px;
+    font: 700 .92rem 'Tajawal', sans-serif;
+    border: 0;
+    border-radius: 10px;
+    color: white;
+    cursor: pointer;
+    white-space: nowrap;
+    direction: rtl;
+}
+.question-tool:hover { filter: brightness(1.12); }
+.translate-btn { background: linear-gradient(135deg, #566cd0, #764ba2); }
+.audio-tool { background: #087d65; }
+.hint-tool { background: #a45408; }
+.favorite-tool { background: #dae1ed; color: #263651; }
+.favorite-tool[aria-pressed="true"] { background: #fde3a1; color: #654107; }
+.translation-controls { margin: 0 0 8px; text-align: right; }
+.tool-panel { margin: 0 0 16px; }
+.tool-panel:not([open]) { display: none; }
+.tool-panel[open] { padding-top: 12px; }
+.app-container.light-mode .option-btn:not(.correct):not(.incorrect) { background: #f8f9fa; color: #2c3e50; }
+.app-container.dark-mode .option-btn:not(.correct):not(.incorrect) { background: #1a1a2e; color: #e0e0e0; }
+.question-section .option-btn { text-align: left; }
+.question-section .choice-translation { text-align: right; }
+.question-section .answer-status, .question-section .keyboard-help { direction: rtl; text-align: right; }
+
+@media (max-width: 1024px) {
+    .lecture-grid { grid-template-columns: repeat(auto-fill, minmax(min(250px, 100%), 1fr)); }
+    .question-header { flex-wrap: wrap; }
+    .question-toolbar { margin-inline-start: auto; }
+}
+@media (max-width: 768px) {
+    .top-controls { position: fixed; inset: 10px auto auto 10px; margin: 0; }
+    .header { padding: 62px 15px 20px; }
+    .app-container .platform-title { padding: 12px 14px; }
+    .lecture-grid { grid-template-columns: 1fr; }
+    .lecture-card:last-child { width: 100%; }
+    .lecture-launch { padding: 23px 18px; }
+    .question-toolbar { margin-inline-start: 0; }
+    .question-tool { padding-inline: 8px; }
+    .app-container .quiz-container { border-radius: 20px; }
+}
+@media (max-width: 360px) {
+    .question-toolbar { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); width: 100%; }
+    .question-toolbar .question-tool { width: 100%; }
+}
+
 
