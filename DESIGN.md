@@ -4,9 +4,9 @@
 
 A calm, editorial learning workspace: pale lavender canvas, ink typography, violet controls and soft mint/blue/ochre accents. Dark mode uses layered ink/plum surfaces with independently chosen foreground colors. The visual identity is QDU; content and learning engines remain independent.
 
-The dashboard pairs a dark violet introduction with a small original vector study illustration. Its primary action resumes the latest saved attempt or opens the first available lecture. Three statistics distinguish coverage, mastery and completed attempts; all use stored study data, never placeholders. Lecture cards retain source order and show both coverage and mastery.
+The student entry page shows the subject title, a brief lecture/question count and the lecture list. A lecture opens in one click. There is no marketing hero, permanent sidebar, or visible statistics dashboard. A compact resume banner appears only when a saved attempt exists.
 
-Desktop navigation lives in a persistent logical-start rail. Below 900px it becomes an in-flow expandable menu, avoiding modal traps or content-covering overlays. The quiz hides workspace navigation and centers a 960px reading surface. Results pair a score ring with a summary, followed by statistics, review and comparison.
+Secondary destinations (favorites, mistakes, history, drafts, achievements and settings) and study statistics are grouped inside a closed native details element labeled «أدوات دراستي». The same element is available outside the quiz and closes on navigation. Lecture progress is expandable and appears only after study activity. The focused quiz and result screens retain their existing behavior and visual system.
 
 ## Sources and ownership
 

@@ -728,3 +728,5 @@
     }
 
 }
+
+.app-container[data-view="quizSection"] #fullscreenToggle { display: flex; }

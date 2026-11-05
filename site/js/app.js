@@ -1,4 +1,4 @@
-import {icon, renderOverview, decorateLibrary} from './presentation.js?v=1.2.0'
+import {icon, renderOverview, decorateLibrary} from './presentation.js?v=1.2.1'
 import {loadContent} from './content.js'
 import {createStore, storageKey} from './storage.js'
 import {addStudyTime, matchingDraft, moveQuestion, openAttempt, recordAnswer, removeDraft, score} from './quiz.js'
@@ -70,15 +70,15 @@ function switchView(next) {
     view = next
     renderOverview(content, store.read())
     byId('app').dataset.view = next
-    byId('app').classList.remove('menu-open')
-    byId('menuToggle').setAttribute('aria-expanded', 'false')
+    byId('studentTools').open = false
+    byId('studentTools').hidden = next === 'quizSection'
     const active = next === 'library' ? byId('library').dataset.type : next === 'lectureSelection' ? 'home' : null
     for (const link of document.querySelectorAll('.nav-link')) {
         const selected = (link.dataset.library || 'home') === active
         if (selected) link.setAttribute('aria-current', 'page')
         else link.removeAttribute('aria-current')
     }
-    byId('pageTitle').textContent = next === 'quizSection' ? 'جلسة دراسة' : next === 'resultsSection' ? 'حصيلة التعلّم' : next === 'library' ? byId('libraryHeading').textContent : 'مساحة الدراسة'
+    byId('pageTitle').textContent = next === 'quizSection' ? 'جلسة دراسة' : next === 'resultsSection' ? 'حصيلة التعلّم' : next === 'library' ? byId('libraryHeading').textContent : content.subject.title || 'المحاضرات'
     pendingQuiz = null
     for (const id of views) byId(id).hidden = id !== next
     window.scrollTo(0, 0)
@@ -94,14 +94,13 @@ function showHome(focus = true) {
     const {lectures, questions} = content
     const historyLectures = new Set(state.history.filter(entry => quizKind(entry) === 'lecture').map(entry => entry.lectureId))
     const drafts = new Map(state.drafts.filter(entry => quizKind(entry) === 'lecture').map(entry => [entry.lectureId, entry]))
-    const completed = lectures.filter(lecture => lecture.questions.length && historyLectures.has(lecture.id)).length
-    byId('overview').textContent = `${lectures.length} محاضرات · ${questions.size} سؤال · ${completed} مكتملة`
+    byId('overview').textContent = `${lectures.length} محاضرات · ${questions.size} سؤال`
     const resume = state.drafts.at(-1)
-    const source = lectures.find(lecture => lecture.questions.length)
     const hero = byId('heroStart')
-    hero.replaceChildren(resume ? 'تابع من حيث توقفت' : 'ابدأ المراجعة', icon('arrow-left'))
-    hero.disabled = !resume && !source
-    hero.onclick = () => launchAttempt(hero, data => resume ? data.drafts.find(entry => entry.id === resume.id) : openAttempt(data, source, content.subject.revision), resume ? 'drafts' : null)
+    byId('resumeBanner').hidden = !resume
+    hero.replaceChildren('استكمال الاختبار', icon('arrow-left'))
+    hero.disabled = !resume
+    hero.onclick = () => launchAttempt(hero, data => data.drafts.find(entry => entry.id === resume?.id), 'drafts')
     byId('heroResume').hidden = !resume
     byId('heroResume').textContent = resume ? `السؤال ${resume.cursor + 1} من ${resume.questions.length} · محاولتك بانتظارك` : ''
     const cards = document.createDocumentFragment()
@@ -141,28 +140,27 @@ async function launchAttempt(control, change, returnLibrary = null) {
 
 function lectureCard(lecture, index, draft, study, completed) {
     const card = element('article', 'lecture-card')
-    card.dataset.tone = index % 4
     const start = button('', 'lecture-launch', () =>
         launchAttempt(start, state => openAttempt(state, lecture, content.subject.revision)))
     const {total, answered, correct, coverage, mastery} = lectureProgress(lecture, study)
-    const top = element('span', 'lecture-top')
-    const mark = element('span', 'lecture-icon')
-    mark.append(icon(['layers', 'target', 'book', 'folder'][index % 4]))
-    top.append(mark, element('span', 'lecture-index', String(index + 1).padStart(2, '0')))
+    const copy = element('span', 'lecture-copy')
     const title = element('span', 'lecture-title', lecture.title.replace(/^LECTURE \d+:\s*/i, ''))
     title.dir = 'auto'
-    const bottom = element('span', 'lecture-bottom')
-    const status = element('span', 'lecture-status', `${total} سؤال`)
-    const cta = element('span', 'lecture-cta', draft ? 'استكمال' : 'ابدأ الاختبار')
-    cta.append(icon('arrow-left'))
-    bottom.append(status, cta)
-    start.append(top, element('span', 'lecture-number', `المحاضرة ${index + 1}`), title, bottom)
+    copy.append(element('span', 'lecture-number', `المحاضرة ${index + 1}`), title,
+        element('span', 'lecture-status', `${total} سؤال · ${draft ? 'استكمال' : 'ابدأ الاختبار'}`))
+    start.append(element('span', 'lecture-index', String(index + 1).padStart(2, '0')), copy, icon('arrow-left'))
     start.disabled = !total && !draft
-    const progress = element('div', 'lecture-progress')
-    progress.append(progressMetric('التغطية', coverage, `${answered} من ${total}`),
-        progressMetric('الإتقان', mastery, answered ? `${correct} من ${answered}` : 'بانتظار إجابة'))
-    if (completed) progress.append(button('مقارنة المحاولات', 'action-btn secondary-btn compact', () => showComparison(lecture)))
-    card.append(start, progress)
+    card.append(start)
+    if (answered || completed) {
+        const progress = element('details', 'lecture-progress')
+        progress.append(element('summary', '', 'تقدّمك في المحاضرة'))
+        const metrics = element('div', 'lecture-metrics')
+        metrics.append(progressMetric('التغطية', coverage, `${answered} من ${total}`),
+            progressMetric('الإتقان', mastery, answered ? `${correct} من ${answered}` : 'بانتظار إجابة'))
+        progress.append(metrics)
+        if (completed) progress.append(button('مقارنة المحاولات', 'action-btn secondary-btn compact', () => showComparison(lecture)))
+        card.append(progress)
+    }
     return card
 }
 
@@ -399,7 +397,7 @@ function favoriteButton(id, onChange, inQuiz = false) {
             icon.setAttribute('viewBox', '0 0 24 24')
             icon.setAttribute('aria-hidden', 'true')
             const use = document.createElementNS('http://www.w3.org/2000/svg', 'use')
-            use.setAttribute('href', new URL('icons.svg?v=1.2.0#star', base).href)
+            use.setAttribute('href', new URL('icons.svg?v=1.2.1#star', base).href)
             icon.append(use)
             control.replaceChildren(icon, element('span', '', 'مفضلة'))
             control.setAttribute('aria-label', description)
@@ -810,7 +808,7 @@ async function init() {
     key = storageKey(base, subject)
     store = createStore(key, notice)
     await store.update(() => {})
-    for (const [id, value] of [['subjectName', subject.title], ['heroSubject', subject.title], ['quizSubject', subject.title], ['credit', subject.credit], ['badge', subject.badge]]) {
+    for (const [id, value] of [['quizSubject', subject.title], ['credit', subject.credit], ['badge', subject.badge]]) {
         byId(id).textContent = value ?? ''
         byId(id).hidden = !value
     }
@@ -929,10 +927,6 @@ window.addEventListener('pagehide', () => {
     feedback.close()
 })
 window.addEventListener('pageshow', resumeClock)
-byId('menuToggle').addEventListener('click', () => {
-    const opened = byId('app').classList.toggle('menu-open')
-    byId('menuToggle').setAttribute('aria-expanded', String(opened))
-})
 byId('homeNav').addEventListener('click', () => showHome())
 byId('libraryBack').addEventListener('click', () => showHome())
 byId('retryLoad').addEventListener('click', () => location.reload())

@@ -176,6 +176,7 @@ with sync_playwright() as playwright:
     page.locator('#leaveQuiz').click()
     expect(page.locator('#exitQuiz')).to_be_visible()
     page.locator('#exitQuiz [value="leave"]').click()
+    page.locator('#studentTools summary').first.click()
     page.locator('[data-library="drafts"]').click()
     expect(page.locator('#libraryHeading')).to_be_visible()
     assert len(state(page)['drafts']) == 1

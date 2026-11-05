@@ -8,7 +8,7 @@ export function icon(name) {
     svg.setAttribute('class', 'qdu-icon')
     svg.setAttribute('aria-hidden', 'true')
     const use = document.createElementNS(svg.namespaceURI, 'use')
-    use.setAttribute('href', new URL(`../icons.svg?v=1.2.0#${name}`, import.meta.url).href)
+    use.setAttribute('href', new URL(`../icons.svg?v=1.2.1#${name}`, import.meta.url).href)
     svg.append(use)
     return svg
 }

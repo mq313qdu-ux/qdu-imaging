@@ -29,8 +29,7 @@ def measure(page, name, width, theme):
     report['cases'].append([name, width, theme])
 
 def navigate(page, kind, width):
-    if width <= 900:
-        page.locator('#menuToggle').click()
+    page.locator('#studentTools summary').first.click()
     page.locator('[data-library="'+kind+'"]').click()
     expect(page.locator('#library')).to_be_visible()
 

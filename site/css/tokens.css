@@ -30,7 +30,7 @@
     --space-5: 24px;
     --space-6: 32px;
     --space-7: 48px;
-    --rail-width: 240px;
+    --rail-width: 0px;
     --brand-action: linear-gradient(115deg,#7758cf,#5940ac);
     color: var(--ink);
     background: var(--canvas);

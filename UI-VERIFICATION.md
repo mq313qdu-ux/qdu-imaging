@@ -1,3 +1,13 @@
+# Student entry simplification — v1.2.1
+
+- First-visit browser checks confirmed four directly clickable lectures, a closed secondary-tools section, no resume banner until an attempt is saved, and no sidebar or hero.
+- Settings remain accessible through the tools section. A wrong answer was saved, the quiz was exited, and the conditional resume button restored the same answered question.
+- Re-ran all 13 Node tests, 96 quiz cases and 113 workspace cases at 320/375/768/1280/1440/1920px in both themes. All passed. Captured and inspected the new home page at 375px and 1280px.
+- Content and all core study/scoring/storage/education/speech/keyboard engines are unchanged from v1.2.0.
+- No physical-device or new WebKit claim is made. Published site verification follows the same Pages workflow.
+
+---
+
 # QDU interface verification — v1.2.0
 
 ## Executed on 6 November 2026 (Asia/Baghdad)
